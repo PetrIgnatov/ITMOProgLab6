@@ -9,19 +9,20 @@ import java.util.Iterator;
 import ru.se.ifmo.prog.lab6.server.commands.*;
 
 public class UDPReader {
-	private DatagramChannel datagramchannel;
-	private InetSocketAddress address;
+	private DatagramSocket datagramSocket;
+	private InetAddress host;
 	private Selector selector;
 	private boolean active;
 	private ByteBuffer buffer;
-	byte arr[];
-	
-	public UDPReader(DatagramChannel datagramchannel, InetSocketAddress address, Selector selector) {
+	private byte arr[];
+	private DatagramPacket datagramPacket;
+
+	public UDPReader(DatagramSocket datagramSocket, Selector selector) {
 		this.active = true;
-		this.datagramchannel = datagramchannel;
-		this.address = address;
+		this.datagramSocket = datagramSocket;
 		this.selector = selector;
 		this.buffer = ByteBuffer.allocate(1024);
+		arr = new byte[1024];
 	}
 	
 	public void start() {
@@ -38,6 +39,7 @@ public class UDPReader {
 				SelectionKey key = keyIterator.next();
 				keyIterator.remove();
 				if (key.isReadable()) {
+					System.out.println("Found key!");
 					readCommand(key);	
 				}
 			}
@@ -48,14 +50,26 @@ public class UDPReader {
 	}
 
 	private void readCommand(SelectionKey key) throws IOException {
-		DatagramChannel readChannel = (DatagramChannel)key.channel();
-		buffer.clear();
-		InetSocketAddress clientAddress = (InetSocketAddress)readChannel.receive(buffer);
-		buffer.flip();
-		showMessage(clientAddress, buffer);
+		arr = new byte[1024];
+		datagramPacket = new DatagramPacket(arr, arr.length);
+		datagramSocket.receive(datagramPacket);
+		System.out.println("Packet Received!");
+		showMessage(datagramPacket);
 	}
 
-	private void showMessage(InetSocketAddress client, ByteBuffer buffer) {
-		System.out.println("Client " + client.getAddress().toString() + " said: " + new String(buffer.array(), 0, buffer.limit()));
+	private void readCommand() {
+		try {
+			datagramPacket = new DatagramPacket(arr, arr.length);
+			datagramSocket.receive(datagramPacket);
+			System.out.println("Packet Received!");
+			showMessage(datagramPacket);
+		}
+		catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	private void showMessage(DatagramPacket packet) {
+		System.out.println(new String(packet.getData(),0,packet.getLength()));
 	}
 }

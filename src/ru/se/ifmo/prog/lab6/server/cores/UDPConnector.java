@@ -8,19 +8,15 @@ import java.nio.channels.*;
 import java.awt.event.*;
 
 public class UDPConnector {
-	private DatagramChannel datagramchannel;
-	private InetSocketAddress address;
+	private DatagramSocket datagramSocket;
+	private InetAddress host;
 	private Selector selector;
 	
 	public boolean Connect(int port) {
 		try {
 			selector = Selector.open();
-			address = new InetSocketAddress(port);
-			datagramchannel = DatagramChannel.open();
-			datagramchannel.bind(address);
-			datagramchannel.configureBlocking(false);
-			datagramchannel.register(selector, SelectionKey.OP_READ);
-			System.out.println("Сервер запущен на IP " + address.getAddress().toString() + " с портом " + port);
+			datagramSocket = new DatagramSocket(port);
+			System.out.println("Сервер запущен на порте " + port);
 		}
 		catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -29,12 +25,12 @@ public class UDPConnector {
 		return true;
 	}
 	
-	public DatagramChannel getDatagramChannel() {
-		return datagramchannel;
+	public DatagramSocket getDatagramSocket() {
+		return datagramSocket;
 	}
 	
-	public InetSocketAddress getAddress() {
-		return address;
+	public InetAddress getHostAddress() {
+		return host;
 	}
 	
 	public Selector getSelector() {

@@ -30,7 +30,7 @@ public class Main {
 		commandmanager.createCommand("print_field_descending_character", new Descending(commandmanager, console, collection));
 		UDPConnector connector = new UDPConnector();
 		connector.Connect(6789);
-		UDPReader reader = new UDPReader(connector.getDatagramChannel(), connector.getAddress(), connector.getSelector());
+		UDPReader reader = new UDPReader(connector.getDatagramSocket(), connector.getSelector());
 		reader.start();
 	}
 }
