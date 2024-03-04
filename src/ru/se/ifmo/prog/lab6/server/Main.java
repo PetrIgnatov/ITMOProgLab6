@@ -1,7 +1,8 @@
 package ru.se.ifmo.prog.lab6.server;
 import ru.se.ifmo.prog.lab6.server.classes.*;
-import ru.se.ifmo.prog.lab6.server.commands.*;
+import ru.se.ifmo.prog.lab6.commands.*;
 import ru.se.ifmo.prog.lab6.server.cores.*;
+import ru.se.ifmo.prog.lab6.cores.*;
 import java.util.*;
 
 public class Main {
@@ -9,9 +10,8 @@ public class Main {
 		if (args.length != 1) {
 			throw new IllegalArgumentException("Error! Got " + Integer.valueOf(args.length) + " arguments when 1 required (file name)");
 		}
-		CollectionData collection = new CollectionData(args[0]);
 		CommandManager commandmanager = new CommandManager();
-		Console console = new Console(commandmanager, collection);
+		/*
 		commandmanager.createCommand("help", new Help(commandmanager, console));
 		commandmanager.createCommand("info", new Info(commandmanager, console));
 		commandmanager.createCommand("show", new Show(commandmanager, console));
@@ -28,6 +28,7 @@ public class Main {
 		commandmanager.createCommand("sum_of_age", new SumOfAge(commandmanager, console, collection));	
 		commandmanager.createCommand("print_field_ascending_character", new Ascending(commandmanager, console, collection));
 		commandmanager.createCommand("print_field_descending_character", new Descending(commandmanager, console, collection));
+		*/
 		UDPConnector connector = new UDPConnector();
 		connector.Connect(6789);
 		UDPReader reader = new UDPReader(connector.getDatagramSocket(), connector.getSelector());

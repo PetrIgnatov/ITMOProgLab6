@@ -6,7 +6,7 @@ import java.net.*;
 import java.nio.channels.*;
 import java.awt.event.*;
 import java.util.Iterator;
-import ru.se.ifmo.prog.lab6.server.commands.*;
+import ru.se.ifmo.prog.lab6.commands.*;
 
 public class UDPReader {
 	private DatagramSocket datagramSocket;
@@ -21,40 +21,14 @@ public class UDPReader {
 		this.active = true;
 		this.datagramSocket = datagramSocket;
 		this.selector = selector;
-		this.buffer = ByteBuffer.allocate(1024);
-		arr = new byte[1024];
+		this.buffer = ByteBuffer.allocate(10000);
+		arr = new byte[10000];
 	}
 	
 	public void start() {
 		while (this.active) {
-			checkSelector();
+			readCommand();
 		}
-	}
-
-	private void checkSelector() {
-		try {
-			selector.select();
-			Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
-			while (keyIterator.hasNext()) {
-				SelectionKey key = keyIterator.next();
-				keyIterator.remove();
-				if (key.isReadable()) {
-					System.out.println("Found key!");
-					readCommand(key);	
-				}
-			}
-		}
-		catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-	}
-
-	private void readCommand(SelectionKey key) throws IOException {
-		arr = new byte[1024];
-		datagramPacket = new DatagramPacket(arr, arr.length);
-		datagramSocket.receive(datagramPacket);
-		System.out.println("Packet Received!");
-		showMessage(datagramPacket);
 	}
 
 	private void readCommand() {
@@ -70,6 +44,7 @@ public class UDPReader {
 	}
 
 	private void showMessage(DatagramPacket packet) {
+		System.out.println(packet.getAddress().toString());
 		System.out.println(new String(packet.getData(),0,packet.getLength()));
 	}
 }

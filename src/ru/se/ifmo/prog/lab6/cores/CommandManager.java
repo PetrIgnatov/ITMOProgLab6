@@ -1,10 +1,11 @@
-package ru.se.ifmo.prog.lab5.cores;
+package ru.se.ifmo.prog.lab6.cores;
 
 import java.util.Map;
 import java.util.HashMap;
-import ru.se.ifmo.prog.lab5.commands.*;
+import ru.se.ifmo.prog.lab6.commands.*;
+import java.io.Serializable;
 
-public class CommandManager {
+public class CommandManager implements Serializable {
 	private HashMap<String, Command> commandList;
 	
 	public CommandManager() {

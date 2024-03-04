@@ -1,4 +1,4 @@
-package ru.se.ifmo.prog.lab5.commands;
+package ru.se.ifmo.prog.lab6.commands;
 
 public interface Executable {
 	public String getName();

@@ -1,8 +1,11 @@
-package ru.se.ifmo.prog.lab5.commands;
+package ru.se.ifmo.prog.lab6.commands;
 
-import ru.se.ifmo.prog.lab5.cores.*;
+import ru.se.ifmo.prog.lab6.server.cores.*;
+import ru.se.ifmo.prog.lab6.client.cores.*;
+import ru.se.ifmo.prog.lab6.cores.*;
+import java.io.Serializable;
 
-public abstract class Command implements Executable {
+public abstract class Command implements Executable, Serializable {
 	String name;
 	String description;
 	CommandManager commandmanager;
