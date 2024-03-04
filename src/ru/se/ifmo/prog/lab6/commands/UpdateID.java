@@ -5,11 +5,11 @@ import ru.se.ifmo.prog.lab6.client.cores.*;
 import ru.se.ifmo.prog.lab6.cores.*;
 
 public class UpdateID extends Command {
-	public UpdateID(CommandManager commandmanager, Console console, CollectionData collection) {
-		super("update id {element}", "обновить значение элемента коллекции, id которого равен заданному", 2, commandmanager, console, collection, new String[]{"Имя дракона: ", "Координата X: ", "Координата Y: ", "Возраст: ", "Цвет (доступные варианты - GREEN, YELLOW, ORANGE, WHITE): ", "Тип дракона (доступные варианты - WATER, UNDERGROUND, AIR): ", "Характер дракона (доступные варианты - EVIL, GOOD, CHAOTIC, CHAOTIC_EVIL, FICKLE): ", "Глубина пещеры: ", "Количество сокровищ в пещере: "}); 
+	public UpdateID() {
+		super("update id {element}", "обновить значение элемента коллекции, id которого равен заданному", 2, new String[]{"Имя дракона: ", "Координата X: ", "Координата Y: ", "Возраст: ", "Цвет (доступные варианты - GREEN, YELLOW, ORANGE, WHITE): ", "Тип дракона (доступные варианты - WATER, UNDERGROUND, AIR): ", "Характер дракона (доступные варианты - EVIL, GOOD, CHAOTIC, CHAOTIC_EVIL, FICKLE): ", "Глубина пещеры: ", "Количество сокровищ в пещере: "}); 
 	}
 	@Override
-        public void execute(String[] args) {
+  public void execute(String[] args, Console console, CommandManager commandmanager, CollectionData collectiondata) {
                 super.check(args.length);
 		try {
 			Integer.parseInt(args[1]);

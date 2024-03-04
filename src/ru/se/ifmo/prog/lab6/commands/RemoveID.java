@@ -5,11 +5,11 @@ import ru.se.ifmo.prog.lab6.client.cores.*;
 import ru.se.ifmo.prog.lab6.cores.*;
 
 public class RemoveID extends Command {
-	public RemoveID(CommandManager commandmanager, Console console, CollectionData collectiondata) {
-		super("remove_by_id id", "удалить элемент из коллекции по его id", 2, commandmanager, console, collectiondata);
+	public RemoveID() {
+		super("remove_by_id id", "удалить элемент из коллекции по его id", 2);
 	}
 	@Override
-	public void execute(String[] args) {
+	public void execute(String[] args, Console console, CommandManager commandmanager, CollectionData collectiondata) {
 		super.check(args.length);
 		try {
 			Integer.parseInt(args[1]);

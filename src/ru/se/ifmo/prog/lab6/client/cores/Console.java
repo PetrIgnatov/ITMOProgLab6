@@ -85,7 +85,7 @@ public class Console implements Serializable {
 					sender.send(arr);
 				}
 				else {
-					command.execute(com);
+					command.execute(com, null, null, null);
 				}
 			}
 			catch (Exception e) {

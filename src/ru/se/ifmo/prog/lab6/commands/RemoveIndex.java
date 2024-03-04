@@ -5,11 +5,11 @@ import ru.se.ifmo.prog.lab6.client.cores.*;
 import ru.se.ifmo.prog.lab6.cores.*;
 
 public class RemoveIndex extends Command {
-	public RemoveIndex(CommandManager commandmanager, Console console, CollectionData collectiondata) {
-		super("remove_at index", "удалить элемент, находящийся в заданной позиции коллекции (index)", 2, commandmanager, console, collectiondata);
+	public RemoveIndex() {
+		super("remove_at index", "удалить элемент, находящийся в заданной позиции коллекции (index)", 2);
 	}
 	@Override
-	public void execute(String[] args) {
+	public void execute(String[] args, Console console, CommandManager commandmanager, CollectionData collectiondata) {
 		super.check(args.length);
 		try {
 			Integer.parseInt(args[1]);

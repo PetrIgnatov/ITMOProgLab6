@@ -14,32 +14,17 @@ public abstract class Command implements Executable, Serializable {
 	int argsnumber;
 	String[] parametersAdvices;
 
-	public Command(String name, String description, int argsnumber, CommandManager commandmanager, Console console) {
+	public Command(String name, String description, int argsnumber, String[] parametersAdvices) {
 		this.name = name;
 		this.description = description;
-		this.commandmanager = commandmanager;
-		this.console = console;
 		this.argsnumber = argsnumber;
-		this.collectiondata = null;
-	}
-
-	public Command(String name, String description, int argsnumber, CommandManager commandmanager, Console console, CollectionData collectiondata) {
-		this.name = name;
-		this.description = description;
-		this.commandmanager = commandmanager;
-		this.console = console;
-		this.argsnumber = argsnumber;
-		this.collectiondata = collectiondata;
-	}
-
-	public Command(String name, String description, int argsnumber, CommandManager commandmanager, Console console, CollectionData collectiondata, String[] parametersAdvices) {
-		this.name = name;
-		this.description = description;
-		this.commandmanager = commandmanager;
-		this.console = console;
-		this.argsnumber = argsnumber;
-		this.collectiondata = collectiondata;
 		this.parametersAdvices = parametersAdvices;
+	}
+
+	public Command(String name, String description, int argsnumber) {
+		this.name = name;
+		this.description = description;
+		this.argsnumber = argsnumber;
 	}
 
 	public void check(int argsnumber) {

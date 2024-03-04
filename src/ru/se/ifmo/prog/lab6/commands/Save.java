@@ -5,11 +5,11 @@ import ru.se.ifmo.prog.lab6.client.cores.*;
 import ru.se.ifmo.prog.lab6.cores.*;
 
 public class Save extends Command {
-	public Save(CommandManager commandmanager, Console console, CollectionData collectiondata) {
-		super("save", "сохранить коллекцию в файл", 1, commandmanager, console, collectiondata);
+	public Save() {
+		super("save", "сохранить коллекцию в файл", 1);
 	}
 	@Override
-	public void execute(String[] args) {
+	public void execute(String[] args, Console console, CommandManager commandmanager, CollectionData collectiondata) {
 		super.check(args.length);
 		collectiondata.save();
 	}
