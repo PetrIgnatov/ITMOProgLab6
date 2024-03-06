@@ -2,6 +2,7 @@ package ru.se.ifmo.prog.lab6.client.cores;
 
 import java.util.*;
 import java.io.*;
+import java.net.*;
 import java.awt.event.*;
 import ru.se.ifmo.prog.lab6.cores.*;
 import ru.se.ifmo.prog.lab6.commands.*;
@@ -15,8 +16,9 @@ public class Console implements Serializable {
 	private LinkedList<String> commandsStack;
 	private int stacksize;
 	private UDPSender sender;
+	private UDPReader reader;
 
-	public Console(CommandManager commandmanager, UDPSender sender)
+	public Console(CommandManager commandmanager, UDPSender sender, UDPReader reader)
 	{
 		this.scanner = new Scanner(System.in);
 		this.active = true;
@@ -25,6 +27,7 @@ public class Console implements Serializable {
 		this.commandsStack = new LinkedList<String>();
 		this.stacksize = 0;
 		this.sender = sender;
+		this.reader = reader;
 	}
 	
 	public void start(UDPConnector connector) {
@@ -34,6 +37,7 @@ public class Console implements Serializable {
 		int port = this.scanner.nextInt();
 		connector.connect(host, port);
 		sender = new UDPSender(connector.getDatagramChannel(), connector.getAddress());
+		reader = new UDPReader(connector.getDatagramChannel());
 		while (this.active) {
 			readCommand();
 		}
@@ -77,15 +81,99 @@ public class Console implements Serializable {
 						history.pollLast();
 					}
 				}
-				if (command.getName() != "exit") {
+				if (command.getName() != "exit" && command.getName() != "history") {
+					CommandShallow shallow = new CommandShallow(command, com);
+					if (command.getName() == "add {element}") {
+						String[] advices = command.getParameterAdvices();
+						String[] parameters = new String[advices.length];
+						for (int i = 0; i < advices.length; ++i) {
+							this.print(advices[i]);	
+							boolean ok = false;
+							while (!ok) {
+								parameters[i] = scanner.nextLine();
+								ok = true;
+								if (parameters[i].split(" ").length > 1 && i != 0) {
+									System.out.println("Требуется ввести только одно значение!");
+									ok = false;
+								}
+								if (i != 0) {
+									parameters[i] = parameters[i].split(" ")[0];
+								}
+								if ((i == 0 || i == 1 || i == 2 || i == 3 || i == 7) && (parameters[i].equals(""))) {
+									System.out.println("Переменная не может иметь значение null!");
+									ok = false;
+								}
+								if (ok) {
+								try {
+									switch(i) {
+										case 1: {
+												int x = Integer.parseInt(parameters[i]);
+												if (x <= -32) {
+													ok = false;
+													System.out.println("X должен быть больше -32");
+												} 
+											}
+											break;
+										case 2:
+											Float.parseFloat(parameters[i]);
+											break;
+										case 3: {
+												int x = Integer.parseInt(parameters[i]);
+												if (x <= 0) {
+													ok = false;
+													System.out.println("Возраст дракона должен быть больше 0");
+												}
+											}
+											break;
+										case 4:
+											if (!parameters[i].equals("") && !parameters[i].equals("GREEN") && !parameters[i].equals("YELLOW") && !parameters[i].equals("ORANGE") && !parameters[i].equals("WHITE")) {
+												ok = false;
+												System.out.println("Введено неверное значение");
+											}
+											break;
+										case 5:
+											if (!parameters[i].equals("") && !parameters[i].equals("WATER") && !parameters[i].equals("UNDERGROUND") && !parameters[i].equals("AIR")) {
+												ok = false;
+												System.out.println("Введено неверное значение");
+											}
+											break;
+										case 6:
+											if (!parameters[i].equals("") && !parameters[i].equals("EVIL") && !parameters[i].equals("GOOD") && !parameters[i].equals("CHAOTIC") && !parameters[i].equals("CHAOTIC_EVIL") && !parameters[i].equals("FICKLE")) {
+												ok = false;
+												System.out.println("Введено неверное значение");
+											}
+											break;
+										case 7:
+											Double.parseDouble(parameters[i]);
+											break;
+										case 8: {
+											float x = Float.parseFloat(parameters[i]);
+											if (x <= 0) {
+												System.out.println("Количество сокровищ должно быть больше 0");
+												ok = false;
+											}
+										}
+
+									}
+								}
+								catch (Exception e) {
+									System.out.println("Введено неверное значение");
+									ok = false;
+								}
+								}
+							}
+						}
+						shallow.setParameters(parameters);
+					}
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					ObjectOutputStream oos = new ObjectOutputStream(baos);
-					oos.writeObject(command);
+					oos.writeObject(shallow);
 					byte[] arr = baos.toByteArray();
 					sender.send(arr);
+					reader.getResponse();
 				}
 				else {
-					command.execute(com, null, null, null);
+					command.execute(com, null, this, null, null);
 				}
 			}
 			catch (Exception e) {
@@ -114,17 +202,13 @@ public class Console implements Serializable {
 			println(dragon.toString());
 		}
 	}
-	
-	public void printInfo() {
-		println(collectiondata.toString());
-	}
-
+	*/
 	public void printHistory() {
 		for (int i = history.size()-1; i >= 0; i--) {
 			println(history.get(i).getName());
 		}	
 	}
-	*/
+	
 	public void readScript(String filename) {
 		if (stacksize < 10000)
 		{

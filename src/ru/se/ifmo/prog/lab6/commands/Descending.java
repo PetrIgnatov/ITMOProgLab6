@@ -1,7 +1,5 @@
 package ru.se.ifmo.prog.lab6.commands;
 
-import ru.se.ifmo.prog.lab6.server.cores.*;
-import ru.se.ifmo.prog.lab6.client.cores.*;
 import ru.se.ifmo.prog.lab6.cores.*;
 
 public class Descending extends Command {
@@ -9,10 +7,12 @@ public class Descending extends Command {
 		super("print_field_descending_character", "вывести значения поля character всех элементов в порядке убывания", 1);
 	}
 	@Override
-	public void execute(String[] args, Console console, CommandManager commandmanager, CollectionData collectiondata) {
+	public Response execute(String[] args, String[] parameters, CommandManager commandmanager, CollectionData collectiondata) {
 		super.check(args.length);
+		String[] response = new String[collectiondata.getDragons().size()];
 		for (int i = collectiondata.getDragons().size() - 1; i >= 0; i--) {
-			console.println(collectiondata.getDragons().get(i).getCharacter().toString());
+			response[i] = collectiondata.getDragons().get(i).getCharacter().toString();
 		}
+		return new Response(response);
 	}
 }

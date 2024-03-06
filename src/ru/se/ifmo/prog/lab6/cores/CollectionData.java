@@ -1,4 +1,4 @@
-package ru.se.ifmo.prog.lab6.server.cores;
+package ru.se.ifmo.prog.lab6.cores;
 
 import java.util.LinkedList;
 import ru.se.ifmo.prog.lab6.server.classes.*;
@@ -358,6 +358,13 @@ public class CollectionData {
 		return sum;
 	}
 
+	public String dragonsString() {
+		String s = "";
+		for (Dragon dragon : dragons) {
+			s += dragon.toString() + "\n";
+		}
+		return s;
+	}
 	@Override
 	public String toString() {
 		return "LinkedList<Dragon>;" + initDate.toString() + ";" + Integer.toString(dragons.size()) + " elements;";

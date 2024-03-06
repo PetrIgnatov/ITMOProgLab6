@@ -1,7 +1,5 @@
 package ru.se.ifmo.prog.lab6.commands;
 
-import ru.se.ifmo.prog.lab6.server.cores.*;
-import ru.se.ifmo.prog.lab6.client.cores.*;
 import ru.se.ifmo.prog.lab6.cores.*;
 import java.io.Serializable;
 
@@ -9,16 +7,17 @@ public abstract class Command implements Executable, Serializable {
 	String name;
 	String description;
 	CommandManager commandmanager;
-	Console console;
 	CollectionData collectiondata;
 	int argsnumber;
 	String[] parametersAdvices;
+	public int calls;
 
 	public Command(String name, String description, int argsnumber, String[] parametersAdvices) {
 		this.name = name;
 		this.description = description;
 		this.argsnumber = argsnumber;
 		this.parametersAdvices = parametersAdvices;
+		this.calls = 1;
 	}
 
 	public Command(String name, String description, int argsnumber) {
@@ -32,6 +31,7 @@ public abstract class Command implements Executable, Serializable {
 			throw new IllegalArgumentException("Error! Got " + Integer.valueOf(argsnumber-1) + " arguments when " + Integer.valueOf(this.argsnumber-1) + " needed");
 		}
 	}
+	
 	@Override
 	public String getName() {
 		return name;
@@ -39,5 +39,9 @@ public abstract class Command implements Executable, Serializable {
 	@Override
 	public String getDescription() {
 		return description;
+	}
+
+	public String[] getParameterAdvices() {
+		return parametersAdvices;
 	}
 }

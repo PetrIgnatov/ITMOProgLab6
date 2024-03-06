@@ -1,7 +1,5 @@
 package ru.se.ifmo.prog.lab6.commands;
 
-import ru.se.ifmo.prog.lab6.server.cores.*;
-import ru.se.ifmo.prog.lab6.client.cores.*;
 import ru.se.ifmo.prog.lab6.cores.*;
 
 public class Info extends Command {
@@ -9,8 +7,9 @@ public class Info extends Command {
 		super("info", "вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)", 1);
 	}
 	@Override
-	public void execute(String[] args, Console console, CommandManager commandmanager, CollectionData collectiondata) {
+	public Response execute(String[] args, String[] parameters, CommandManager commandmanager, CollectionData collectiondata) {
 		super.check(args.length);
-//		console.printInfo();
+		Response response = new Response(new String[]{collectiondata.toString()});
+    return response;
 	}
 }

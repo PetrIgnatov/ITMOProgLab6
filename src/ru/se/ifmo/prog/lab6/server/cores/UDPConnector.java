@@ -10,11 +10,9 @@ import java.awt.event.*;
 public class UDPConnector {
 	private DatagramSocket datagramSocket;
 	private InetAddress host;
-	private Selector selector;
 	
 	public boolean Connect(int port) {
 		try {
-			selector = Selector.open();
 			datagramSocket = new DatagramSocket(port);
 			System.out.println("Сервер запущен на порте " + port);
 		}
@@ -31,9 +29,5 @@ public class UDPConnector {
 	
 	public InetAddress getHostAddress() {
 		return host;
-	}
-	
-	public Selector getSelector() {
-		return selector;
 	}
 }
