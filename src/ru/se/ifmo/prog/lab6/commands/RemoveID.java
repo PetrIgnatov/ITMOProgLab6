@@ -1,14 +1,18 @@
 package ru.se.ifmo.prog.lab6.commands;
 
 import ru.se.ifmo.prog.lab6.cores.*;
+import ru.se.ifmo.prog.lab6.classes.*;
 
 public class RemoveID extends Command {
 	public RemoveID() {
 		super("remove_by_id id", "удалить элемент из коллекции по его id", 2);
 	}
 	@Override
-	public Response execute(String[] args, String[] parameters, CommandManager commandmanager, CollectionData collectiondata) {
+	public Response execute(String[] args, Integer stacksize, Dragon dragon, CommandManager commandmanager, CollectionData collectiondata) {
 		super.check(args.length);
+		if (stacksize > 10000) {
+      return new Response(new String[0]);
+    }
 		try {
 			Integer.parseInt(args[1]);
 		}

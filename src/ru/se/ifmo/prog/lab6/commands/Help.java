@@ -1,14 +1,18 @@
 package ru.se.ifmo.prog.lab6.commands;
 
 import ru.se.ifmo.prog.lab6.cores.*;
+import ru.se.ifmo.prog.lab6.classes.*;
 
 public class Help extends Command {
 	public Help() {
 		super("help", "вывести справку по доступным командам", 1);
 	}
 	@Override
-	public Response execute(String[] args, String[] parameters, CommandManager commandmanager, CollectionData collectiondata) {
+	public Response execute(String[] args, Integer stacksize, Dragon dragon, CommandManager commandmanager, CollectionData collectiondata) {
 		super.check(args.length);
+		if (stacksize > 10000) {
+      return new Response(new String[0]);
+    }
 		String[] response = {commandmanager.getCommands()};
 		return new Response(response);
 	}

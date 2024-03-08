@@ -1,5 +1,5 @@
 package ru.se.ifmo.prog.lab6.server;
-import ru.se.ifmo.prog.lab6.server.classes.*;
+import ru.se.ifmo.prog.lab6.classes.*;
 import ru.se.ifmo.prog.lab6.commands.*;
 import ru.se.ifmo.prog.lab6.server.cores.*;
 import ru.se.ifmo.prog.lab6.cores.*;
@@ -11,6 +11,10 @@ public class Main {
 			throw new IllegalArgumentException("Error! Got " + Integer.valueOf(args.length) + " arguments when 1 required (file name)");
 		}
 		CollectionData collection = new CollectionData(args[0]);
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			System.out.println("\nСохраняем коллекцию");
+			collection.save();
+			}));
 		CommandManager commandmanager = new CommandManager();
 		commandmanager.createCommand("help", new Help());
 		commandmanager.createCommand("info", new Info());

@@ -1,6 +1,6 @@
 package ru.se.ifmo.prog.lab6.client;
 
-import ru.se.ifmo.prog.lab6.client.classes.*;
+import ru.se.ifmo.prog.lab6.classes.*;
 import ru.se.ifmo.prog.lab6.commands.*;
 import ru.se.ifmo.prog.lab6.cores.*;
 import ru.se.ifmo.prog.lab6.client.cores.*;
@@ -9,8 +9,11 @@ import java.util.*;
 public class Main {
 	public static void main(String[] args) {
 		if (args.length != 0) {
-			throw new IllegalArgumentException("Error! Got " + Integer.valueOf(args.length) + " arguments when 1 required (file name)");
+			throw new IllegalArgumentException("Error! Got " + Integer.valueOf(args.length) + " arguments when 0 required");
 		}
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			System.out.println("\nВыключаем клиент");
+			}));
 		CommandManager commandmanager = new CommandManager();
 		UDPConnector connector = new UDPConnector();
 		UDPSender sender = new UDPSender(); 

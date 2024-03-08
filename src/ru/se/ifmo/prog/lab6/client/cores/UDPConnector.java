@@ -14,6 +14,7 @@ public class UDPConnector {
 	public void connect(String hostname, int port) {
 		try {
 			datagramChannel = DatagramChannel.open();
+			datagramChannel.configureBlocking(false);	
 			host = InetAddress.getByName(hostname);
 			address = new InetSocketAddress(host, port);
 		}

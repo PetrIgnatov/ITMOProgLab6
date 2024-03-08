@@ -6,11 +6,13 @@ import java.net.*;
 import java.util.*;
 import java.nio.channels.*;
 import ru.se.ifmo.prog.lab6.commands.*;
+import ru.se.ifmo.prog.lab6.cores.*;
 
 public class UDPReader {
 	private DatagramChannel datagramChannel;
 	private ByteBuffer buffer;
 	private byte[] arr;
+
 	public UDPReader()
 	{
 		this.datagramChannel = null;
@@ -29,15 +31,17 @@ public class UDPReader {
 			arr = new byte[10000];
 			buffer = ByteBuffer.wrap(arr);
 			buffer.clear();
-			datagramChannel.receive(buffer);
-			System.out.println("Packet Received!");
-			ByteArrayInputStream bis = new ByteArrayInputStream(arr);
-			ObjectInput in = new ObjectInputStream(bis);
-			Response response = (Response)in.readObject();
-			for (String s: response.getMessage()) {
-				System.out.println(s);
+			try {
+				datagramChannel.receive(buffer);
+				ByteArrayInputStream bis = new ByteArrayInputStream(arr);
+				ObjectInput in = new ObjectInputStream(bis);
+				Response response = (Response)in.readObject();	
+				return response;
 			}
-			return response;
+			catch (StreamCorruptedException e) {
+				System.out.println("Error! Looks like the server is offline");
+				return new Response(new String[0]);
+			}
 		}
 		catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -46,6 +50,6 @@ public class UDPReader {
 		catch (ClassNotFoundException e) {
 			System.out.println(e.getMessage());
 			return new Response(new String[0]);
-		}
+		}	
 	}
 }

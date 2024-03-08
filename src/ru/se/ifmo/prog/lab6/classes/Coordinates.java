@@ -1,6 +1,8 @@
-package ru.se.ifmo.prog.lab6.server.classes;
+package ru.se.ifmo.prog.lab6.classes;
 
-public class Coordinates implements Comparable<Coordinates> {
+import java.io.Serializable;
+
+public class Coordinates implements Comparable<Coordinates>, Serializable {
 	private Integer x; //Значение поля должно быть больше -32, Поле не может быть null
 	private Float y; //Поле не может быть null
 			

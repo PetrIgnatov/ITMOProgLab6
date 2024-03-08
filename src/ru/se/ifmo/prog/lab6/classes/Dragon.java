@@ -1,8 +1,9 @@
-package ru.se.ifmo.prog.lab6.server.classes;
+package ru.se.ifmo.prog.lab6.classes;
 
 import java.util.Date;
+import java.io.Serializable;
 
-public class Dragon implements Comparable<Dragon> {
+public class Dragon implements Comparable<Dragon>, Serializable {
 	private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
 	private String name; //Поле не может быть null, Строка не может быть пустой
 	private Coordinates coordinates; //Поле не может быть null
@@ -36,8 +37,18 @@ public class Dragon implements Comparable<Dragon> {
 		this.setCharacter(character);
 		this.setCave(new DragonCave(depth, numberOfTreasures));	
 	}
+	
+	public Dragon(String name, Integer x, Float y, int age, Color color, DragonType type, DragonCharacter character, Double depth, Float numberOfTreasures) {
+		this.setName(name);
+		this.setCoordinates(new Coordinates(x, y));
+		this.setAge(age);
+		this.setColor(color);
+		this.setType(type);
+		this.setCharacter(character);
+		this.setCave(new DragonCave(depth, numberOfTreasures));	
+	}
 
-	private void setId(int id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	
@@ -55,7 +66,7 @@ public class Dragon implements Comparable<Dragon> {
 		this.coordinates = coordinates;
 	}
 	
-	private void setDate(java.util.Date creationDate) {
+	public void setDate(java.util.Date creationDate) {
 		if (creationDate == null) {
 			throw new IllegalArgumentException("Error! Creation Date can't be null for dragon with name \"" + this.name + "\"");
 		}

@@ -20,18 +20,10 @@ public class UDPSender {
 	public UDPSender(DatagramChannel datagramChannel, SocketAddress hostAddress) {
 		this.datagramChannel = datagramChannel;
 		this.hostAddress = hostAddress;
-		try {
-			send((new String("hello")).getBytes());
-		}
-		catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
 	}
 
 	public void send(byte[] arr) throws IOException {
 		buffer = ByteBuffer.wrap(arr);
-		System.out.println(arr.length);
 		datagramChannel.send(buffer, hostAddress);
-		System.out.println("Успешно отправлено, " + arr.length);
 	}
 }

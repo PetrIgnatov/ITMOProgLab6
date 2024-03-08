@@ -1,7 +1,7 @@
 package ru.se.ifmo.prog.lab6.cores;
 
 import java.util.LinkedList;
-import ru.se.ifmo.prog.lab6.server.classes.*;
+import ru.se.ifmo.prog.lab6.classes.*;
 import java.io.*;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -298,6 +298,14 @@ public class CollectionData {
 		}
 	}
 	
+	public void add(Dragon dragon) {
+		if (dragon != null) {
+			dragon.setId(++maxId);
+			dragon.setDate(new java.util.Date());
+			dragons.add(dragon);
+		}
+	}
+
 	public int findById(int id) {
 		for (int i = 0; i < dragons.size(); ++i) {
 			if (dragons.get(i).getId() == id) {
@@ -308,10 +316,19 @@ public class CollectionData {
 	}
 
 	public void update(String[] parameters, int ind, int id) {
+		Dragon newDragon = createDragon(parameters, id);
+		if (newDragon != null) {
+			dragons.set(ind, newDragon);
+		}
+	}
+
+	public void update(Dragon dragon, int ind, int id) {
 		try {
-			Dragon newDragon = createDragon(parameters, id);
-			if (newDragon != null) {
-				dragons.set(ind, newDragon);
+			if (!dragon.equals(null)) {
+				dragon.setId(id);
+				dragon.setDate(new java.util.Date());
+				System.out.println(dragon.toString());
+				dragons.set(ind, dragon);
 			}
 		}
 		catch (Exception e) {

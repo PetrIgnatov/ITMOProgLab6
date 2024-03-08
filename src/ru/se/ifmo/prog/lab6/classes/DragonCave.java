@@ -1,6 +1,8 @@
-package ru.se.ifmo.prog.lab6.server.classes;
+package ru.se.ifmo.prog.lab6.classes;
 
-public class DragonCave implements Comparable<DragonCave> {
+import java.io.Serializable;
+
+public class DragonCave implements Comparable<DragonCave>, Serializable {
 	private Double depth; //Поле не может быть null
 	private Float numberOfTreasures; //Поле может быть null, Значение поля должно быть больше 0
 	

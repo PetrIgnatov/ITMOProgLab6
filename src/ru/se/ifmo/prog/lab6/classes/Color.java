@@ -1,4 +1,4 @@
-package ru.se.ifmo.prog.lab6.server.classes;
+package ru.se.ifmo.prog.lab6.classes;
 
 public enum Color {
 	GREEN,

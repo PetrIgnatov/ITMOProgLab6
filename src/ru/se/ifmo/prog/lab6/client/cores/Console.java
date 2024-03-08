@@ -75,62 +75,65 @@ public class Console implements Serializable {
 		if (com.length > 0) {
 			try {
 				Command command = commandmanager.getCommand(com[0]);
+				if (command != null && command.getName().equals("save")) {
+					System.out.println("Клиент не может сохранять данные");
+					return;
+				}
 				if (command != null) {
 					history.push(command);
 					while (history.size() > 5) {
 						history.pollLast();
 					}
 				}
-				if (command.getName() != "exit" && command.getName() != "history") {
-					CommandShallow shallow = new CommandShallow(command, com);
-					if (command.getName() == "add {element}") {
-						String[] advices = command.getParameterAdvices();
-						String[] parameters = new String[advices.length];
-						for (int i = 0; i < advices.length; ++i) {
-							this.print(advices[i]);	
-							boolean ok = false;
-							while (!ok) {
-								parameters[i] = scanner.nextLine();
-								ok = true;
-								if (parameters[i].split(" ").length > 1 && i != 0) {
-									System.out.println("Требуется ввести только одно значение!");
-									ok = false;
-								}
-								if (i != 0) {
-									parameters[i] = parameters[i].split(" ")[0];
-								}
-								if ((i == 0 || i == 1 || i == 2 || i == 3 || i == 7) && (parameters[i].equals(""))) {
-									System.out.println("Переменная не может иметь значение null!");
-									ok = false;
-								}
-								if (ok) {
+				CommandShallow shallow = new CommandShallow(command, com);
+				if (command.getName().equals("add {element}") || command.getName().equals("update id {element}")) {
+					String[] advices = command.getParameterAdvices();
+					String[] parameters = new String[advices.length];
+					for (int i = 0; i < advices.length; ++i) {
+						this.print(advices[i]);	
+						boolean ok = false;
+						while (!ok) {
+							parameters[i] = scanner.nextLine();
+							ok = true;
+							if (parameters[i].split(" ").length > 1 && i != 0) {
+								System.out.println("Требуется ввести только одно значение!");
+								ok = false;
+							}
+							if (i != 0) {
+								parameters[i] = parameters[i].split(" ")[0];
+							}
+							if ((i == 0 || i == 1 || i == 2 || i == 3 || i == 7) && (parameters[i].equals(""))) {
+								System.out.println("Переменная не может иметь значение null!");
+								ok = false;
+							}
+							if (ok) {
 								try {
 									switch(i) {
 										case 1: {
-												int x = Integer.parseInt(parameters[i]);
-												if (x <= -32) {
-													ok = false;
-													System.out.println("X должен быть больше -32");
-												} 
-											}
-											break;
+											int x = Integer.parseInt(parameters[i]);
+											if (x <= -32) {
+												ok = false;
+												System.out.println("X должен быть больше -32");
+											} 
+										}
+										break;
 										case 2:
 											Float.parseFloat(parameters[i]);
 											break;
 										case 3: {
-												int x = Integer.parseInt(parameters[i]);
-												if (x <= 0) {
-													ok = false;
-													System.out.println("Возраст дракона должен быть больше 0");
-												}
+											int x = Integer.parseInt(parameters[i]);
+											if (x <= 0) {
+												ok = false;
+												System.out.println("Возраст дракона должен быть больше 0");
 											}
-											break;
+										}
+										break;
 										case 4:
 											if (!parameters[i].equals("") && !parameters[i].equals("GREEN") && !parameters[i].equals("YELLOW") && !parameters[i].equals("ORANGE") && !parameters[i].equals("WHITE")) {
 												ok = false;
 												System.out.println("Введено неверное значение");
 											}
-											break;
+										break;
 										case 5:
 											if (!parameters[i].equals("") && !parameters[i].equals("WATER") && !parameters[i].equals("UNDERGROUND") && !parameters[i].equals("AIR")) {
 												ok = false;
@@ -153,30 +156,40 @@ public class Console implements Serializable {
 												ok = false;
 											}
 										}
-
 									}
 								}
 								catch (Exception e) {
 									System.out.println("Введено неверное значение");
 									ok = false;
 								}
-								}
 							}
 						}
-						shallow.setParameters(parameters);
 					}
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					ObjectOutputStream oos = new ObjectOutputStream(baos);
-					oos.writeObject(shallow);
-					byte[] arr = baos.toByteArray();
-					sender.send(arr);
-					reader.getResponse();
+					try {
+						shallow.setDragon(parameters);
+					}
+					catch (Exception e) {
+						System.out.println(e.getMessage());
+					}
 				}
-				else {
-					command.execute(com, null, this, null, null);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(baos);
+				oos.writeObject(shallow);
+				byte[] arr = baos.toByteArray();
+				sender.send(arr);
+				Response response = reader.getResponse();
+				for (String s: response.getMessage()) {
+					if (s.equals("exit")) {
+						this.stop();
+						break;
+					}
+					System.out.println(s);
 				}
 			}
-			catch (Exception e) {
+			catch (IllegalArgumentException e) {
+				System.out.println(e.getMessage());
+			}
+			catch (IOException e) {
 				System.out.println(e.getMessage());
 			}
 		}
@@ -196,42 +209,11 @@ public class Console implements Serializable {
 	public void stop() {
 		active = false;
 	}
-	/*
-	public void printCollection() {
-		for (Dragon dragon : collectiondata.getDragons()) {
-			println(dragon.toString());
-		}
-	}
-	*/
+	
 	public void printHistory() {
 		for (int i = history.size()-1; i >= 0; i--) {
 			println(history.get(i).getName());
 		}	
-	}
-	
-	public void readScript(String filename) {
-		if (stacksize < 10000)
-		{
-			try {	
-				ScriptReader scriptreader = new ScriptReader(filename);
-				String inpfile = scriptreader.readFile();
-				if (inpfile != null)
-				{
-					String[] commands = inpfile.split("\n");
-					for (int i = commands.length-1; i >= 0; i--) {
-						++stacksize;
-						commandsStack.offerFirst(commands[i]);
-					}
-				}
-			}
-			catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-		}
-		else
-		{
-			System.out.println("Error! Too many commands!");
-		}
 	}
 }
 
