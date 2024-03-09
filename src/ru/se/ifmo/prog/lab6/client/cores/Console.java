@@ -7,6 +7,9 @@ import java.awt.event.*;
 import ru.se.ifmo.prog.lab6.cores.*;
 import ru.se.ifmo.prog.lab6.commands.*;
 import ru.se.ifmo.prog.lab6.client.classes.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import ru.se.ifmo.prog.lab6.exceptions.*;
 
 public class Console implements Serializable {
 	private Scanner scanner;
@@ -31,15 +34,46 @@ public class Console implements Serializable {
 	}
 	
 	public void start(UDPConnector connector) {
-		this.print("Введите IP хоста: ");
-		String host = this.scanner.nextLine();
-		this.print("Введите порт хоста: ");
-		int port = this.scanner.nextInt();
+		boolean con = false;
+		String host = "";
+		int port = 0;
+		Pattern pattern = Pattern.compile("^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$");	
+		while (!con) {
+			con = true;
+			this.print("Введите IP хоста: ");
+			host = scanner.nextLine();
+			Matcher matcher = pattern.matcher(host);
+    			con = matcher.find();
+			if (con) {
+				try {
+					InetAddress.getByName(host);
+				}
+				catch (UnknownHostException e) {
+					System.out.println("Неизвестный IP! Попробуйте ввести снова");
+					con = false;
+				}
+			}
+		}
+		con = false;
+		while (!con) {
+			con = true;
+			this.print("Введите порт хоста: ");
+			try {
+				port = Integer.parseInt(this.scanner.nextLine());
+			}
+			catch (IllegalArgumentException e) {
+				System.out.println("Неизвестный порт! Попробуйте ввести снова");
+				con = false;
+			}
+		}
 		connector.connect(host, port);
 		sender = new UDPSender(connector.getDatagramChannel(), connector.getAddress());
 		reader = new UDPReader(connector.getDatagramChannel());
+		int[] parametersptr = {-1};
+		CommandShallow shallow = new CommandShallow();
+		String[] parameters = new String[0];
 		while (this.active) {
-			readCommand();
+			readCommand();	
 		}
 	}
 
@@ -64,21 +98,21 @@ public class Console implements Serializable {
 
 	public void readCommand() {
 		String[] com; 
-		if (commandsStack.size() == 0) {
-			stacksize = 0;
-			com = scanner.nextLine().split(" ");
-		}
-		else {
-			this.println(commandsStack.peek());
-			com = commandsStack.removeFirst().split(" ");
-		}
+		stacksize = 0;
+		com = scanner.nextLine().split(" ");
 		if (com.length > 0) {
+			Command command	= null;
 			try {
-				Command command = commandmanager.getCommand(com[0]);
+				command = commandmanager.getCommand(com[0]);
 				if (command != null && command.getName().equals("save")) {
 					System.out.println("Клиент не может сохранять данные");
 					return;
 				}
+			}
+			catch (CommandIOException e) {
+				System.out.println(e.getMessage());
+			}
+			try {
 				if (command != null) {
 					history.push(command);
 					while (history.size() > 5) {
@@ -193,6 +227,24 @@ public class Console implements Serializable {
 				System.out.println(e.getMessage());
 			}
 		}
+	}
+
+	
+	private void sendCommand(CommandShallow shallow) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(shallow);
+		byte[] arr = baos.toByteArray();
+		sender.send(arr);
+		Response response = reader.getResponse();
+		for (String s: response.getMessage()) {
+			if (s.equals("exit")) {
+				this.stop();
+				break;
+			}
+			System.out.println(s);
+		}
+
 	}
 
 	public String readln() {

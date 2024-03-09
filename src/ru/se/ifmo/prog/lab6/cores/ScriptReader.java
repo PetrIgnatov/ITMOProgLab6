@@ -79,7 +79,7 @@ public class ScriptReader {
 				}
 			}
 			catch (IOException e) {
-				System.out.println("Error! Something is wrong with file data");
+				System.out.println(e.getMessage());
 			}
 			return shallows;
 		}

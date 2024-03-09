@@ -8,6 +8,7 @@ import java.awt.event.*;
 import java.util.Iterator;
 import ru.se.ifmo.prog.lab6.commands.*;
 import ru.se.ifmo.prog.lab6.cores.*;
+import java.util.logging.*;
 
 public class UDPSender {
 	private DatagramSocket datagramSocket;
@@ -16,7 +17,7 @@ public class UDPSender {
 		this.datagramSocket = datagramSocket;
 	}
 
-	public void send(Response response, InetAddress address, int port) {
+	public void send(Response response, InetAddress address, int port, Logger logger) {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -24,9 +25,10 @@ public class UDPSender {
 			byte[] arr = baos.toByteArray();
 			DatagramPacket datagramPacket = new DatagramPacket(arr, arr.length, address, port);
 			datagramSocket.send(datagramPacket);
+			logger.fine("Sent " + arr.length + " bytes");
 		}
 		catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.severe(e.getMessage());
 		}
 	}
 }

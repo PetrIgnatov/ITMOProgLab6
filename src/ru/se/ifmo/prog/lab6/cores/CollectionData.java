@@ -7,6 +7,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Collections;
+import ru.se.ifmo.prog.lab6.exceptions.*;
 
 public class CollectionData {
 	private LinkedList<Dragon> dragons;
@@ -41,13 +42,13 @@ public class CollectionData {
 							if (inputDragon.charAt(i) == ';') {
 								++pos;
 								if ((i == inputDragon.length()-1 && pos != 11) || (i < inputDragon.length()-1 && pos >= 11)) {
-									throw new IOException("Error! The given file's data doesn't match the required type");
+									throw new FileInputException("Error! The given file's data doesn't match the required type");
 								}
 							}
 							else
 							{
 								if ((i == inputDragon.length()-1 && pos != 10) || pos >= 11) {
-									throw new IOException("Error! The given file's data doesn't match the required type");
+									throw new FileInputException("Error! The given file's data doesn't match the required type");
 								}
 								splitted[pos] += inputDragon.charAt(i);
 							}
@@ -70,7 +71,7 @@ public class CollectionData {
 								col = null;
 								break;
 							default:
-								throw new IOException("Error! Unknown color \"" + splitted[6] + "\"");
+								throw new ConvertationException("Error! Unknown color \"" + splitted[6] + "\"");
 						}
 						DragonType type = null; 
 						switch(splitted[7]) {
@@ -87,7 +88,7 @@ public class CollectionData {
 								type = null;
 								break;
 							default:
-								throw new IOException("Error! Unknown type \"" + splitted[7] + "\"");
+								throw new ConvertationException("Error! Unknown type \"" + splitted[7] + "\"");
 						}
 						DragonCharacter character = null;
 						switch(splitted[8]) {
@@ -110,7 +111,7 @@ public class CollectionData {
 								character = null;
 								break;
 							default:
-								throw new IOException("Error! Unknown character \"" + splitted[8] + "\"");
+								throw new ConvertationException("Error! Unknown character \"" + splitted[8] + "\"");
 						}
 						String format = "EEE MMM dd HH:mm:ss z yyyy";
 						SimpleDateFormat formater = new SimpleDateFormat(format, Locale.ENGLISH);
@@ -119,7 +120,7 @@ public class CollectionData {
 						maxId = Math.max(maxId, Integer.parseInt(splitted[0]));
 						for (int i = 0; i < dragons.size(); ++i) {
 							if (Integer.parseInt(splitted[0]) == dragons.get(i).getId()) {
-								throw new IOException("Error! Two dragons from file have the same IDs");
+								throw new ConvertationException("Error! Two dragons from file have the same IDs");
 							}
 						}
 						dragons.add(new Dragon(

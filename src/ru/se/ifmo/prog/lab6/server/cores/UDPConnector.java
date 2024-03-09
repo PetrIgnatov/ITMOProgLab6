@@ -6,18 +6,19 @@ import java.nio.*;
 import java.net.*;
 import java.nio.channels.*;
 import java.awt.event.*;
+import java.util.logging.*;
 
 public class UDPConnector {
 	private DatagramSocket datagramSocket;
 	private InetAddress host;
 	
-	public boolean Connect(int port) {
+	public boolean Connect(int port, Logger logger) {
 		try {
 			datagramSocket = new DatagramSocket(port);
-			System.out.println("Сервер запущен на порте " + port);
+			logger.fine("Сервер запущен на порте " + port);
 		}
 		catch (IOException e) {
-			System.out.println(e.getMessage());
+			logger.severe(e.getMessage());
 			return false;
 		}
 		return true;

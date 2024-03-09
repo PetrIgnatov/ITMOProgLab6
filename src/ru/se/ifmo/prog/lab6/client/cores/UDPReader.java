@@ -27,29 +27,37 @@ public class UDPReader {
 	}
 
 	public Response getResponse() {
+		int iter = 0;
 		try {
 			arr = new byte[10000];
 			buffer = ByteBuffer.wrap(arr);
 			buffer.clear();
-			try {
-				datagramChannel.receive(buffer);
-				ByteArrayInputStream bis = new ByteArrayInputStream(arr);
-				ObjectInput in = new ObjectInputStream(bis);
-				Response response = (Response)in.readObject();	
-				return response;
-			}
-			catch (StreamCorruptedException e) {
-				System.out.println("Error! Looks like the server is offline");
-				return new Response(new String[0]);
+			boolean ok = false;
+			while (!ok) {
+				try {
+					++iter;
+					ok = true;
+					datagramChannel.receive(buffer);
+					ByteArrayInputStream bis = new ByteArrayInputStream(arr);
+					ObjectInput in = new ObjectInputStream(bis);
+					Response response = (Response)in.readObject();	
+					return response;
+				}
+				catch (StreamCorruptedException e) {
+					ok = false;
+					if (iter >= 10000) {
+						System.out.println("Сервер недоступен, попробуйте позже");
+						return new Response(new String[0]);
+					}
+				}
 			}
 		}
 		catch (IOException e) {
 			System.out.println(e.getMessage());
-			return new Response(new String[0]);
 		}
 		catch (ClassNotFoundException e) {
 			System.out.println(e.getMessage());
-			return new Response(new String[0]);
-		}	
+		}
+		return new Response(new String[0]);	
 	}
 }

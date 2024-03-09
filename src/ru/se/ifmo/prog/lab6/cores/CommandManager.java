@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import ru.se.ifmo.prog.lab6.commands.*;
 import java.io.Serializable;
+import ru.se.ifmo.prog.lab6.exceptions.*;
 
 public class CommandManager implements Serializable {
 	private HashMap<String, Command> commandList;
@@ -16,9 +17,9 @@ public class CommandManager implements Serializable {
 		this.commandList = commandList;
 	}
 
-	public void createCommand(String name, Command command) {
+	public void createCommand(String name, Command command) throws CommandIOException {
 		if (name.equals(null) || name.equals("^\s*$")) {
-			throw new IllegalArgumentException("Error! Can't create command with name \"" + name + "\"");
+			throw new CommandIOException("Error! Can't create command with name \"" + name + "\"");
 		}
 		commandList.put(name, command);
 	}
@@ -31,11 +32,11 @@ public class CommandManager implements Serializable {
 		return commands;
 	}
 
-	public Command getCommand(String name) {
+	public Command getCommand(String name) throws CommandIOException{
 		if (commandList.containsKey(name)) {
 			return commandList.get(name);
 		}
-		throw new IllegalArgumentException("Error! Unknown command \"" + name + "\"");
+		throw new CommandIOException("Error! Unknown command \"" + name + "\"");
 	}
 }
 

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.logging.*;
 import java.nio.channels.*;
 import java.awt.event.*;
 import java.util.Iterator;
@@ -44,7 +45,7 @@ public class UDPReader {
 		}
 	}
 	
-	public void start() {
+	public void start(Logger logger) {
 		int parametersptr = -1;
 		CommandShallow shallow = new CommandShallow();
 		String[] parameters = new String[0];
@@ -96,7 +97,7 @@ public class UDPReader {
 			catch (IOException e) {
 				System.out.println(e.getMessage());
 			}
-			readCommand();
+			readCommand(logger);
 		}
 	}
 	
@@ -121,7 +122,7 @@ public class UDPReader {
 		}
 	}
 
-	private void readCommand() {
+	private void readCommand(Logger logger) {
 		try {
 			datagramPacket = new DatagramPacket(arr, arr.length);
 			datagramSocket.receive(datagramPacket);
@@ -136,36 +137,30 @@ public class UDPReader {
 				histories.get(datagramPacket.getAddress()).removeFirst();
 			}
 			Response response;
-			System.out.println(shallow.getCommand().getName());
+			logger.info("Got packet with command " + shallow.getCommand().getName());
 			if (!shallow.getCommand().getName().equals("history")) {
 				Integer stacksize = 0;
 				response = shallow.getCommand().execute(shallow.getArguments(), stacksize, shallow.getDragon(), commandmanager, collection);
 			}
 			else {
 				String[] history = new String[histories.get(datagramPacket.getAddress()).size()];
-				System.out.println(history.length);
 				for (int i = 0; i < history.length; ++i) {
 					history[i] = histories.get(datagramPacket.getAddress()).get(i).getName();
-					System.out.println(history[i]);
 				}
 				response = new Response(history);
 			}
 			//System.out.println(datagramPacket.getAddress().toString());
-			sender.send(response, datagramPacket.getAddress(), datagramPacket.getPort());
+			sender.send(response, datagramPacket.getAddress(), datagramPacket.getPort(), logger);
 			//showMessage(datagramPacket);
 		}
 		catch (IOException e) {
-		//	System.out.println(e.getMessage());
+	//		System.out.println(e.getMessage());
 		}
 		catch (ClassNotFoundException e) {
-			System.out.println(e.getMessage());
+			logger.severe(e.getMessage());
 		}
 	}
 
-	private void showMessage(DatagramPacket packet) {
-		System.out.println(packet.getAddress().toString());
-		System.out.println(new String(packet.getData(),0,packet.getLength()));
-	}
 
 	public void stop() {
 		this.active = false;
